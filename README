@@ -1,0 +1,10 @@
+This is a solution to the Instagram Engineering Challenge.
+
+http://instagram-engineering.tumblr.com/post/12651721845/instagram-engineering-challenge-the-unshredder
+
+I don't really play with image processing things, so this was a bit of an
+experiment for me.  The current status is that it works on the sample image
+provided by Instagram.  Please see TODO for the current list of tasks.
+
+This code is licensed under the GPLv3 or, at your option, any later version.
+Copyright (C) 2011 Damian Gryski <damian@gryski.com>
