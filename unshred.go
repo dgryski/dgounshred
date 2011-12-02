@@ -65,7 +65,15 @@ func distance(sl1, sl2 image.Image) uint64 {
 	return d
 }
 
+func guessStripWidth(img image.Image) int {
+    // placeholder 
+    return 32
+}
+
+
 func main() {
+
+        var optStripWidth = flag.Int("stripwidth", 32, "the width of the image strips")
 
 	flag.Parse()
 
@@ -81,12 +89,17 @@ func main() {
 	r, _ := os.Open(input_filename)
 	pngimg, _ := png.Decode(r)
 
-
 	img := pngimg.(*image.NRGBA)
 
         fmt.Println("image is: ", img.Bounds())
 
-	stripwidth := 32 // constant, for now
+        var stripwidth int
+
+        if *optStripWidth == 0 {
+            stripwidth = guessStripWidth(img)
+        } else {
+            stripwidth = *optStripWidth
+        }
 
 	nstrip := img.Bounds().Dx() / stripwidth
 
