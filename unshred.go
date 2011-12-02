@@ -66,14 +66,13 @@ func distance(sl1, sl2 image.Image) uint64 {
 }
 
 func guessStripWidth(img image.Image) int {
-    // placeholder 
-    return 32
+	// placeholder 
+	return 32
 }
-
 
 func main() {
 
-        var optStripWidth = flag.Int("stripwidth", 32, "the width of the image strips")
+	var optStripWidth = flag.Int("stripwidth", 32, "the width of the image strips")
 
 	flag.Parse()
 
@@ -82,24 +81,24 @@ func main() {
 		os.Exit(1)
 	}
 
-        input_filename := flag.Arg(0)
-        fmt.Println("input file: ", input_filename)
-        output_filename := flag.Arg(1)
+	input_filename := flag.Arg(0)
+	fmt.Println("input file: ", input_filename)
+	output_filename := flag.Arg(1)
 
 	r, _ := os.Open(input_filename)
 	pngimg, _ := png.Decode(r)
 
 	img := pngimg.(*image.NRGBA)
 
-        fmt.Println("image is: ", img.Bounds())
+	fmt.Println("image is: ", img.Bounds())
 
-        var stripwidth int
+	var stripwidth int
 
-        if *optStripWidth == 0 {
-            stripwidth = guessStripWidth(img)
-        } else {
-            stripwidth = *optStripWidth
-        }
+	if *optStripWidth == 0 {
+		stripwidth = guessStripWidth(img)
+	} else {
+		stripwidth = *optStripWidth
+	}
 
 	nstrip := img.Bounds().Dx() / stripwidth
 
@@ -142,5 +141,5 @@ func main() {
 	png.Encode(po, unshredded)
 	po.Close()
 
-        fmt.Println("unshredded image written to: ", output_filename)
+	fmt.Println("unshredded image written to: ", output_filename)
 }
