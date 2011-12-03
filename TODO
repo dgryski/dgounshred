@@ -19,3 +19,7 @@ Come up with an actual "find leftmost slice" algorithm
        - the slice that generates the longest 'path' (cycles?)
        - the slice that has the largest error for left neighbour
           => But we have internal slices with larger error values :(
+             (stupid black and white tokyo skyscraper)
+
+Check that list of slices has no cliques?  Although I have yet to see a test
+case that does.
