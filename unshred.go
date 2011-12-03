@@ -84,6 +84,25 @@ func guessStripWidth(img image.Image) int {
 	return 32
 }
 
+func guessLeftMost(rightof []Score) int {
+
+        // Guess the left-most by assuming our matching algorithm places it
+        // left of the rightmost slice (since every other slice will have a
+        // better, actual match).  Not a terrible heuristic, bu fails on the
+        // Tokyo test image due to higher internal mismatches (thanks to the
+        // stupid black and white skyscraper)
+
+	rightmost := 0
+
+	for i, r := range rightof {
+		if rightof[rightmost].distance < r.distance {
+			rightmost = i
+		}
+	}
+
+	return rightof[rightmost].index
+}
+
 func main() {
 
 	var optStripWidth = flag.Int("stripwidth", 32, "the width of the image strips")
@@ -133,8 +152,7 @@ func main() {
 		fmt.Println("right neighbour for ", i, " = ", rightof[i])
 	}
 
-	// can't figure out a way to determine this :(
-	leftmost := 8
+	leftmost := guessLeftMost(rightof[:])
 
 	fmt.Println("using slice", leftmost, "as leftmost")
 
