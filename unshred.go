@@ -87,8 +87,8 @@ func guessStripWidth(img image.Image) int {
 func guessLeftMost(rightof []Score) int {
 
         // Guess the left-most by assuming our matching algorithm places it
-        // left of the rightmost slice (since every other slice will have a
-        // better, actual match).  Not a terrible heuristic, bu fails on the
+        // right of the rightmost slice (since every other slice will have a
+        // better, actual match).  Not a terrible heuristic, but fails on the
         // Tokyo test image due to higher internal mismatches (thanks to the
         // stupid black and white skyscraper)
 
