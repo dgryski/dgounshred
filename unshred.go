@@ -43,6 +43,20 @@ func neighbourFor(index int, strips []image.Image) Score {
 	return min
 }
 
+func rgb2yuv(c color.NRGBA) (y, u, v float32) {
+
+	R := float32(c.R) / float32(255)
+	G := float32(c.G) / float32(255)
+	B := float32(c.B) / float32(255)
+
+	Y := 0.299*R + 0.587*G + 0.114*B
+	U := -0.14713*R - 0.28886*G + 0.436*B
+	V := 0.615*R - 0.51499*G - 0.10001*B
+
+	return Y, U, V
+
+}
+
 func distance(sl1, sl2 image.Image) uint64 {
 
 	d := uint64(0)
