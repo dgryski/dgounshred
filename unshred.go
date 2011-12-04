@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"image"
-	"image/color"
 	"image/draw"
 	"image/png"
 	"image/ycbcr"
