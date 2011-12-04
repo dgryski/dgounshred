@@ -63,7 +63,7 @@ func distance(sl1 image.Image, col1 int, sl2 image.Image, col2 int) uint64 {
 
 	b1 := sl1.Bounds()
 
-	for y := b1.Min.Y; y < b1.Max.Y - 2; y += 2 {
+	for y := b1.Min.Y; y < b1.Max.Y-2; y += 2 {
 
 		r1, g1, b1, _ := sl1.At(col1, y).RGBA()
 		r2, g2, b2, _ := sl2.At(col2, y).RGBA()
