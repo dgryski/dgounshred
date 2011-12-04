@@ -33,7 +33,10 @@ func neighbourFor(index int, strips []image.Image) Score {
 			continue
 		}
 
-		d := distance(strips[index], s)
+		b1 := strips[index].Bounds()
+		b2 := s.Bounds()
+
+		d := distance(strips[index], b1.Max.X-1, s, b2.Min.X)
 
 		if d < min.distance {
 			min = Score{i, d}
@@ -57,17 +60,16 @@ func rgb2yuv(c color.NRGBA) (y, u, v float32) {
 
 }
 
-func distance(sl1, sl2 image.Image) uint64 {
+func distance(sl1 image.Image, col1 int, sl2 image.Image, col2 int) uint64 {
 
 	d := uint64(0)
 
 	b1 := sl1.Bounds()
-	b2 := sl2.Bounds()
 
 	for y := b1.Min.Y; y < b1.Max.Y; y++ {
 
-		c1 := sl1.At(b1.Max.X-1, y).(color.NRGBA)
-		c2 := sl2.At(b2.Min.X, y).(color.NRGBA)
+		c1 := sl1.At(col1, y).(color.NRGBA)
+		c2 := sl2.At(col2, y).(color.NRGBA)
 
 		dr := float64(int16(c1.R) - int16(c2.R))
 		dg := float64(int16(c1.G) - int16(c2.G))
