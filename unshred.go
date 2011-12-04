@@ -96,6 +96,35 @@ func guessLeftMostHighestAbsoluteError(rightof []Score) int {
 	return rightof[rightmost].index
 }
 
+func guessLeftMostNoLeftMatch(rightof []Score) int {
+
+	seen := make([]bool, len(rightof), len(rightof))
+
+	for i := 0; i < len(rightof); i++ {
+		seen[i] = false
+	}
+
+	for _, r := range rightof {
+		seen[r.index] = true
+	}
+
+	leftmost := -1
+	notseen := 0
+	for i := 0; i < len(rightof); i++ {
+		if !seen[i] {
+			leftmost = i
+			notseen++
+		}
+	}
+
+	if notseen == 1 {
+		return leftmost
+	}
+
+	return -1
+
+}
+
 func guessLeftMostHighestAverageError(strips []image.Image, rightof []Score) int {
 
 	rightmost := -1
@@ -171,7 +200,10 @@ func main() {
 		fmt.Println("right neighbour for ", i, " = ", rightof[i])
 	}
 
-	leftmost := guessLeftMostHighestAverageError(strips[:], rightof[:])
+	leftmost := guessLeftMostNoLeftMatch(rightof)
+	if leftmost == -1 {
+		leftmost = guessLeftMostHighestAverageError(strips, rightof)
+	}
 
 	fmt.Println("using strip", leftmost, "as leftmost")
 
