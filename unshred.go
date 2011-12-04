@@ -11,14 +11,6 @@ import (
 	"os"
 )
 
-func saveStrips(strips []image.Image) {
-	for i, s := range strips {
-		w, _ := os.Create(fmt.Sprintf("Strip_%02d.png", i))
-		png.Encode(w, s)
-		w.Close()
-	}
-}
-
 type Score struct {
 	index    int
 	distance uint64
