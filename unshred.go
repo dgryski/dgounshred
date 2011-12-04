@@ -60,6 +60,16 @@ func rgb2yuv(c color.NRGBA) (y, u, v float32) {
 
 }
 
+func printInternalDistances(img image.Image) {
+
+	b := img.Bounds()
+
+	for x := b.Min.X; x < b.Max.X-1; x++ {
+		d1 := distance(img, x, img, x+1)
+		fmt.Println("d(", x-b.Min.X, ", ", x-b.Min.X+1, ") =", d1)
+	}
+}
+
 func distance(sl1 image.Image, col1 int, sl2 image.Image, col2 int) uint64 {
 
 	d := uint64(0)
@@ -86,19 +96,45 @@ func guessStripWidth(img image.Image) int {
 	return 32
 }
 
-func guessLeftMost(rightof []Score) int {
-
-        // Guess the left-most by assuming our matching algorithm places it
-        // right of the rightmost slice (since every other slice will have a
-        // better, actual match).  Not a terrible heuristic, but fails on the
-        // Tokyo test image due to higher internal mismatches (thanks to the
-        // stupid black and white skyscraper)
+func guessLeftMostHighestAbsoluteError(rightof []Score) int {
+	// Guess the left-most by assuming our matching algorithm places it
+	// right of the rightmost slice (since every other slice will have a
+	// better, actual match).  Not a terrible heuristic, but fails on the
+	// Tokyo test image due to higher internal mismatches (thanks to the
+	// stupid black and white skyscraper)
 
 	rightmost := 0
 
 	for i, r := range rightof {
 		if rightof[rightmost].distance < r.distance {
 			rightmost = i
+		}
+	}
+
+	return rightof[rightmost].index
+}
+
+func guessLeftMostHighestAverageError(strips []image.Image, rightof []Score) int {
+
+	rightmost := -1
+	ravg := float64(0)
+
+	for i, r := range rightof {
+
+		fmt.Println("comparing slice", i, " and ", r.index)
+
+		b := strips[i].Bounds()
+		d1 := distance(strips[i], b.Max.X-2, strips[i], b.Max.X-1)
+
+		b = strips[r.index].Bounds()
+		d2 := distance(strips[r.index], b.Min.X, strips[r.index], b.Min.X+1)
+
+		avg := float64(d1+d2) / 2.0
+
+		if rightmost == -1 || math.Abs(float64(rightof[rightmost].distance)-ravg)/ravg < math.Abs(float64(r.distance)-avg)/avg {
+			fmt.Println("new max=", math.Abs(float64(r.distance)-avg)/avg)
+			rightmost = i
+			ravg = avg
 		}
 	}
 
@@ -154,9 +190,10 @@ func main() {
 		fmt.Println("right neighbour for ", i, " = ", rightof[i])
 	}
 
-	leftmost := guessLeftMost(rightof[:])
+	leftmost := guessLeftMostHighestAverageError(strips[:], rightof[:])
 
-	fmt.Println("using slice", leftmost, "as leftmost")
+	fmt.Println("leftmost abs error: ", guessLeftMostHighestAbsoluteError(rightof[:]))
+	fmt.Println("using strip", leftmost, "as leftmost")
 
 	unshredded := image.NewNRGBA(img.Bounds())
 
