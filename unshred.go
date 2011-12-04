@@ -60,16 +60,6 @@ func rgb2yuv(c color.NRGBA) (y, u, v float32) {
 
 }
 
-func printInternalDistances(img image.Image) {
-
-	b := img.Bounds()
-
-	for x := b.Min.X; x < b.Max.X-1; x++ {
-		d1 := distance(img, x, img, x+1)
-		fmt.Println("d(", x-b.Min.X, ", ", x-b.Min.X+1, ") =", d1)
-	}
-}
-
 func distance(sl1 image.Image, col1 int, sl2 image.Image, col2 int) uint64 {
 
 	d := uint64(0)
@@ -121,8 +111,6 @@ func guessLeftMostHighestAverageError(strips []image.Image, rightof []Score) int
 
 	for i, r := range rightof {
 
-		fmt.Println("comparing slice", i, " and ", r.index)
-
 		b := strips[i].Bounds()
 		d0 := distance(strips[i], b.Max.X-3, strips[i], b.Max.X-2)
 		d1 := distance(strips[i], b.Max.X-2, strips[i], b.Max.X-1)
@@ -134,7 +122,6 @@ func guessLeftMostHighestAverageError(strips []image.Image, rightof []Score) int
 		avg := float64(d0+d1+d2+d3) / 4.0
 
 		if rightmost == -1 || math.Abs(float64(rightof[rightmost].distance)-ravg)/ravg < math.Abs(float64(r.distance)-avg)/avg {
-			fmt.Println("new max=", math.Abs(float64(r.distance)-avg)/avg)
 			rightmost = i
 			ravg = avg
 		}
@@ -194,7 +181,6 @@ func main() {
 
 	leftmost := guessLeftMostHighestAverageError(strips[:], rightof[:])
 
-	fmt.Println("leftmost abs error: ", guessLeftMostHighestAbsoluteError(rightof[:]))
 	fmt.Println("using strip", leftmost, "as leftmost")
 
 	unshredded := image.NewNRGBA(img.Bounds())
@@ -205,10 +191,12 @@ func main() {
 		y0 := 0
 		x1 := x0 + stripwidth
 		y1 := img.Bounds().Dy()
-		fmt.Println("slice ", n)
+		fmt.Print(" ", n)
 		draw.Draw(unshredded, image.Rect(x0, y0, x1, y1), strips[n], strips[n].Bounds().Min, draw.Src)
 		n = rightof[n].index
 	}
+
+	fmt.Println()
 
 	po, _ := os.Create(output_filename)
 	png.Encode(po, unshredded)
