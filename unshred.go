@@ -82,7 +82,7 @@ func guessStripWidth(img image.Image) int {
 	return 32
 }
 
-func guessLeftMostNoLeftMatch(rightof []Score) int {
+func guessLeftmostNoLeftMatch(rightof []Score) int {
 
 	seen := make([]bool, len(rightof), len(rightof))
 
@@ -111,7 +111,7 @@ func guessLeftMostNoLeftMatch(rightof []Score) int {
 
 }
 
-func guessLeftMostHighestAverageError(strips []image.Image, rightof []Score) int {
+func guessLeftmostHighestAverageError(strips []image.Image, rightof []Score) int {
 
 	rightmost := -1
 	ravg := float64(0)
@@ -250,9 +250,9 @@ func main() {
 		fmt.Println("right neighbour for ", i, " = ", rightof[i])
 	}
 
-	leftmost := guessLeftMostNoLeftMatch(rightof)
+	leftmost := guessLeftmostNoLeftMatch(rightof)
 	if leftmost == -1 {
-		leftmost = guessLeftMostHighestAverageError(strips, rightof)
+		leftmost = guessLeftmostHighestAverageError(strips, rightof)
 	}
 
 	fmt.Println("using strip", leftmost, "as leftmost")
