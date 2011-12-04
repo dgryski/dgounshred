@@ -1,5 +1,7 @@
 stripwidth guessing
 
+Shredder is ugly and contains lots of duplicate code.
+
 --threshold for 'goodness' of a ranking (vs. other strips)
    A "match" must be <0.6 better than any other match to be considers 'accurate'
 
