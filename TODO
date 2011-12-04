@@ -1,9 +1,5 @@
 stripwidth guessing
 
---shred
-   A way to easily generate test cases
-      (combine with --stripwidth)
-
 --threshold for 'goodness' of a ranking (vs. other strips)
    A "match" must be <0.6 better than any other match to be considers 'accurate'
 
