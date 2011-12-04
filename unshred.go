@@ -7,8 +7,12 @@ import (
 	"image/color"
 	"image/draw"
 	"image/png"
+	"image/ycbcr"
 	"math"
+	"math/rand"
 	"os"
+
+	_ "image/jpeg"
 )
 
 type Score struct {
@@ -151,9 +155,68 @@ func guessLeftMostHighestAverageError(strips []image.Image, rightof []Score) int
 	return rightof[rightmost].index
 }
 
+// fisher-yates 
+func shuffle(array []image.Image) {
+
+	for i := len(array) - 1; i >= 1; i-- {
+		j := rand.Intn(i + 1)
+		array[i], array[j] = array[j], array[i]
+	}
+}
+
+func shredImage(input, output string, stripwidth int) {
+
+	r, err := os.Open(input)
+	if err != nil {
+		fmt.Println("error during open: ", err)
+		return
+	}
+
+	decoded, _, err := image.Decode(r)
+	if err != nil {
+		fmt.Println("error during decode: ", err)
+		return
+	}
+
+	img := decoded.(*ycbcr.YCbCr)
+
+	fmt.Println("image is: ", img.Bounds())
+
+	nstrip := img.Bounds().Dx() / stripwidth
+
+	strips := make([]image.Image, nstrip, nstrip)
+
+	for i := 0; i < nstrip; i++ {
+		x0 := i * stripwidth
+		y0 := 0
+		x1 := x0 + stripwidth
+		y1 := img.Bounds().Dy()
+		strips[i] = img.SubImage(image.Rect(x0, y0, x1, y1))
+	}
+
+	shuffle(strips)
+
+	shredded := image.NewNRGBA(img.Bounds())
+
+	for i := 0; i < nstrip; i++ {
+		x0 := i * stripwidth
+		y0 := 0
+		x1 := x0 + stripwidth
+		y1 := img.Bounds().Dy()
+		draw.Draw(shredded, image.Rect(x0, y0, x1, y1), strips[i], strips[i].Bounds().Min, draw.Src)
+	}
+
+	fmt.Println("encoding to ", output)
+
+	po, _ := os.Create(output)
+	png.Encode(po, shredded)
+	po.Close()
+}
+
 func main() {
 
 	var optStripWidth = flag.Int("stripwidth", 32, "the width of the image strips")
+	var optShred = flag.Bool("shred", false, "shred image")
 
 	flag.Parse()
 
@@ -165,6 +228,11 @@ func main() {
 	input_filename := flag.Arg(0)
 	fmt.Println("input file: ", input_filename)
 	output_filename := flag.Arg(1)
+
+	if *optShred {
+		shredImage(input_filename, output_filename, *optStripWidth)
+		os.Exit(1)
+	}
 
 	r, _ := os.Open(input_filename)
 	pngimg, _ := png.Decode(r)
