@@ -213,7 +213,7 @@ func main() {
 
 	if *optShred {
 		shredImage(input_filename, output_filename, *optStripWidth)
-		os.Exit(1)
+		return
 	}
 
 	r, _ := os.Open(input_filename)
