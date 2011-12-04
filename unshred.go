@@ -124,12 +124,14 @@ func guessLeftMostHighestAverageError(strips []image.Image, rightof []Score) int
 		fmt.Println("comparing slice", i, " and ", r.index)
 
 		b := strips[i].Bounds()
+		d0 := distance(strips[i], b.Max.X-3, strips[i], b.Max.X-2)
 		d1 := distance(strips[i], b.Max.X-2, strips[i], b.Max.X-1)
 
 		b = strips[r.index].Bounds()
 		d2 := distance(strips[r.index], b.Min.X, strips[r.index], b.Min.X+1)
+		d3 := distance(strips[r.index], b.Min.X+1, strips[r.index], b.Min.X+2)
 
-		avg := float64(d1+d2) / 2.0
+		avg := float64(d0+d1+d2+d3) / 4.0
 
 		if rightmost == -1 || math.Abs(float64(rightof[rightmost].distance)-ravg)/ravg < math.Abs(float64(r.distance)-avg)/avg {
 			fmt.Println("new max=", math.Abs(float64(r.distance)-avg)/avg)
