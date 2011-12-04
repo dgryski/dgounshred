@@ -24,12 +24,13 @@ func neighbourFor(index int, strips []image.Image) Score {
 
 	min := Score{-1, uint64(1 << 63)}
 
+	b1 := strips[index].Bounds()
+
 	for i, s := range strips {
 		if i == index {
 			continue
 		}
 
-		b1 := strips[index].Bounds()
 		b2 := s.Bounds()
 
 		d := distance(strips[index], b1.Max.X-1, s, b2.Min.X)
