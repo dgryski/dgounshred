@@ -196,6 +196,25 @@ func shredImage(input, output string, stripwidth int) {
 	po.Close()
 }
 
+type SubImager interface {
+	SubImage(r image.Rectangle) image.Image
+}
+
+func splitImage(nstrip, stripwidth, dy int, si SubImager) []image.Image {
+
+	strips := make([]image.Image, nstrip, nstrip)
+
+	for i := 0; i < nstrip; i++ {
+		x0 := i * stripwidth
+		y0 := 0
+		x1 := x0 + stripwidth
+		y1 := dy
+		strips[i] = si.SubImage(image.Rect(x0, y0, x1, y1))
+	}
+
+	return strips
+}
+
 func main() {
 
 	var optStripWidth = flag.Int("stripwidth", 32, "the width of the image strips")
@@ -218,9 +237,7 @@ func main() {
 	}
 
 	r, _ := os.Open(input_filename)
-	pngimg, _ := png.Decode(r)
-
-	img := pngimg.(*image.NRGBA)
+	img, _, _ := image.Decode(r)
 
 	fmt.Println("image is: ", img.Bounds())
 
@@ -234,14 +251,15 @@ func main() {
 
 	nstrip := img.Bounds().Dx() / stripwidth
 
-	strips := make([]image.Image, nstrip, nstrip)
+	var strips []image.Image
 
-	for i := 0; i < nstrip; i++ {
-		x0 := i * stripwidth
-		y0 := 0
-		x1 := x0 + stripwidth
-		y1 := img.Bounds().Dy()
-		strips[i] = img.SubImage(image.Rect(x0, y0, x1, y1))
+	switch t := img.(type) {
+	case *image.NRGBA:
+		strips = splitImage(nstrip, stripwidth, img.Bounds().Dy(), t)
+	case *image.RGBA:
+		strips = splitImage(nstrip, stripwidth, img.Bounds().Dy(), t)
+	case *ycbcr.YCbCr:
+		strips = splitImage(nstrip, stripwidth, img.Bounds().Dy(), t)
 	}
 
 	rightof := make([]Score, nstrip, nstrip)
