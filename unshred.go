@@ -65,12 +65,12 @@ func distance(sl1 image.Image, col1 int, sl2 image.Image, col2 int) uint64 {
 
 	for y := b1.Min.Y; y < b1.Max.Y - 2; y += 2 {
 
-		c1 := sl1.At(col1, y).(color.NRGBA)
-		c2 := sl2.At(col2, y).(color.NRGBA)
+		r1, g1, b1, _ := sl1.At(col1, y).RGBA()
+		r2, g2, b2, _ := sl2.At(col2, y).RGBA()
 
-		dr := float64(int16(c1.R) - int16(c2.R))
-		dg := float64(int16(c1.G) - int16(c2.G))
-		db := float64(int16(c1.B) - int16(c2.B))
+		dr := float64(int16(r1) - int16(r2))
+		dg := float64(int16(g1) - int16(g2))
+		db := float64(int16(b1) - int16(b2))
 
 		d += uint64(math.Sqrt(dr*dr + db*db + dg*dg))
 	}
