@@ -82,24 +82,6 @@ func guessStripWidth(img image.Image) int {
 	return 32
 }
 
-func guessLeftMostHighestAbsoluteError(rightof []Score) int {
-	// Guess the left-most by assuming our matching algorithm places it
-	// right of the rightmost slice (since every other slice will have a
-	// better, actual match).  Not a terrible heuristic, but fails on the
-	// Tokyo test image due to higher internal mismatches (thanks to the
-	// stupid black and white skyscraper)
-
-	rightmost := 0
-
-	for i, r := range rightof {
-		if rightof[rightmost].distance < r.distance {
-			rightmost = i
-		}
-	}
-
-	return rightof[rightmost].index
-}
-
 func guessLeftMostNoLeftMatch(rightof []Score) int {
 
 	seen := make([]bool, len(rightof), len(rightof))
