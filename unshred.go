@@ -70,7 +70,7 @@ func guessStripWidth(img image.Image) int {
 
 func guessLeftmostNoLeftMatch(rightof []Score) int {
 
-	seen := make([]bool, len(rightof), len(rightof))
+	seen := make([]bool, len(rightof))
 
 	for _, r := range rightof {
 		seen[r.index] = true
@@ -148,7 +148,7 @@ func shredImage(input, output string, stripwidth int) {
 
 	nstrip := img.Bounds().Dx() / stripwidth
 
-	strips := make([]image.Image, nstrip, nstrip)
+	strips := make([]image.Image, nstrip)
 
 	for i := 0; i < nstrip; i++ {
 		x0 := i * stripwidth
@@ -183,7 +183,7 @@ type SubImager interface {
 
 func splitImage(nstrip, stripwidth, dy int, si SubImager) []image.Image {
 
-	strips := make([]image.Image, nstrip, nstrip)
+	strips := make([]image.Image, nstrip)
 
 	for i := 0; i < nstrip; i++ {
 		x0 := i * stripwidth
@@ -243,7 +243,7 @@ func main() {
 		strips = splitImage(nstrip, stripwidth, img.Bounds().Dy(), t)
 	}
 
-	rightof := make([]Score, nstrip, nstrip)
+	rightof := make([]Score, nstrip)
 
 	for i := 0; i < nstrip; i++ {
 		rightof[i] = neighbourFor(i, strips)
