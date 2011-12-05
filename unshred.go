@@ -93,7 +93,7 @@ func guessLeftmostNoLeftMatch(rightof []Score) int {
 
 }
 
-func guessLeftmostHighestAverageError(strips []image.Image, rightof []Score) int {
+func guessLeftmostHighestRelativeError(strips []image.Image, rightof []Score) int {
 
 	rightmost := -1
 	ravg := float64(0)
@@ -252,7 +252,7 @@ func main() {
 
 	leftmost := guessLeftmostNoLeftMatch(rightof)
 	if leftmost == -1 {
-		leftmost = guessLeftmostHighestAverageError(strips, rightof)
+		leftmost = guessLeftmostHighestRelativeError(strips, rightof)
 	}
 
 	fmt.Println("using strip", leftmost, "as leftmost")
