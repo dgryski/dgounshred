@@ -72,10 +72,6 @@ func guessLeftmostNoLeftMatch(rightof []Score) int {
 
 	seen := make([]bool, len(rightof), len(rightof))
 
-	for i := 0; i < len(rightof); i++ {
-		seen[i] = false
-	}
-
 	for _, r := range rightof {
 		seen[r.index] = true
 	}
