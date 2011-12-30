@@ -6,7 +6,6 @@ import (
 	"image"
 	"image/draw"
 	"image/png"
-	"image/ycbcr"
 	"math"
 	"math/rand"
 	"os"
@@ -142,7 +141,7 @@ func shredImage(input, output string, stripwidth int) {
 		return
 	}
 
-	img := decoded.(*ycbcr.YCbCr)
+	img := decoded.(*image.YCbCr)
 
 	fmt.Println("image is: ", img.Bounds())
 
@@ -239,7 +238,7 @@ func main() {
 		strips = splitImage(nstrip, stripwidth, img.Bounds().Dy(), t)
 	case *image.RGBA:
 		strips = splitImage(nstrip, stripwidth, img.Bounds().Dy(), t)
-	case *ycbcr.YCbCr:
+	case *image.YCbCr:
 		strips = splitImage(nstrip, stripwidth, img.Bounds().Dy(), t)
 	}
 
