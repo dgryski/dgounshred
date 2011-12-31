@@ -63,8 +63,51 @@ func distance(sl1 image.Image, col1 int, sl2 image.Image, col2 int) uint64 {
 }
 
 func guessStripWidth(img image.Image) int {
-	// placeholder 
-	return 32
+
+	b := img.Bounds()
+
+	distances := make([]float64, b.Dx())
+
+	for x := b.Min.X; x < b.Max.X; x++ {
+		distances[x-b.Min.X] = float64(distance(img, x, img, x+1))
+	}
+
+	sum := float64(0)
+	for i := range distances {
+		sum += distances[i]
+	}
+	mean := sum / float64(len(distances))
+
+	devsum := float64(0)
+	for i := range distances {
+		devsum += math.Pow(distances[i]-mean, 2)
+	}
+
+	stddev := math.Sqrt(devsum / float64(len(distances)))
+
+	// we now have the mean and stddev of all the distances between sequential pixel columns
+	// figure out the most common width between distances which are 2 stddevs from the mean
+
+	votes := make(map[int]int)
+
+	prev := 0
+	for i := range distances {
+		if distances[i] > mean+2*stddev {
+			votes[i-prev]++
+			prev = i
+		}
+	}
+
+	width := 0
+	maxvotes := 0
+	for k, v := range votes {
+		if maxvotes < v {
+			width = k
+			maxvotes = v
+		}
+	}
+
+	return width
 }
 
 func guessLeftmostNoLeftMatch(rightof []Score) int {
@@ -197,7 +240,7 @@ func splitImage(nstrip, stripwidth, dy int, si SubImager) []image.Image {
 
 func main() {
 
-	var optStripWidth = flag.Int("stripwidth", 32, "the width of the image strips")
+	var optStripWidth = flag.Int("stripwidth", 0, "the width of the image strips")
 	var optShred = flag.Bool("shred", false, "shred image")
 
 	flag.Parse()
@@ -228,6 +271,8 @@ func main() {
 	} else {
 		stripwidth = *optStripWidth
 	}
+
+	fmt.Println("using ", stripwidth, " as strip width")
 
 	nstrip := img.Bounds().Dx() / stripwidth
 
