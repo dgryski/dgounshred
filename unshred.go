@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"image"
 	"image/draw"
+	"image/jpeg"
 	"image/png"
 	"math"
 	"math/rand"
 	"os"
-
-	_ "image/jpeg"
 )
 
 type Score struct {
@@ -246,7 +245,7 @@ func main() {
 	flag.Parse()
 
 	if flag.NArg() != 2 {
-		fmt.Println("usage: input.png output.png")
+		fmt.Println("usage: input output.jpg")
 		os.Exit(1)
 	}
 
@@ -317,7 +316,7 @@ func main() {
 	fmt.Println()
 
 	po, _ := os.Create(output_filename)
-	png.Encode(po, unshredded)
+	jpeg.Encode(po, unshredded, nil)
 	po.Close()
 
 	fmt.Println("unshredded image written to: ", output_filename)
