@@ -149,7 +149,7 @@ func guessLeftmostHighestRelativeError(strips []image.Image, rightof []Score) in
 		d2 := distance(strips[r.index], b.Min.X, strips[r.index], b.Min.X+1)
 		d3 := distance(strips[r.index], b.Min.X+1, strips[r.index], b.Min.X+2)
 
-		avg := (d0+d1+d2+d3) / 4.0
+		avg := (d0 + d1 + d2 + d3) / 4.0
 
 		if rightmost == -1 || math.Abs(rightof[rightmost].distance-ravg)/ravg < math.Abs(r.distance-avg)/avg {
 			rightmost = i
