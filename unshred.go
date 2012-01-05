@@ -88,14 +88,15 @@ func guessStripWidth(img image.Image) int {
 
 	votes := make(map[int]int)
 
-	prev := 0
-	outlier := mean + 2*stddev
-	for i := range distances {
-		if distances[i] > outlier {
+	prev := -1
+	for i := 1; i < len(distances); i++ {
+		if distances[i] > distances[i-1]+2*stddev {
+			fmt.Print(i-prev, " ")
 			votes[i-prev]++
 			prev = i
 		}
 	}
+	fmt.Println()
 
 	width := 0
 	maxvotes := 0
