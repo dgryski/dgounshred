@@ -15,12 +15,12 @@ import (
 
 type Score struct {
 	index    int
-	distance uint64
+	distance float64
 }
 
 func neighbourFor(index int, strips []image.Image) Score {
 
-	min := Score{-1, uint64(1 << 63)}
+	min := Score{-1, math.Inf(1)}
 
 	b1 := strips[index].Bounds()
 
@@ -41,9 +41,9 @@ func neighbourFor(index int, strips []image.Image) Score {
 	return min
 }
 
-func distance(sl1 image.Image, col1 int, sl2 image.Image, col2 int) uint64 {
+func distance(sl1 image.Image, col1 int, sl2 image.Image, col2 int) float64 {
 
-	d := uint64(0)
+	d := float64(0)
 
 	b1 := sl1.Bounds()
 
@@ -56,7 +56,7 @@ func distance(sl1 image.Image, col1 int, sl2 image.Image, col2 int) uint64 {
 		dg := float64(int16(g1) - int16(g2))
 		db := float64(int16(b1) - int16(b2))
 
-		d += uint64(math.Sqrt(dr*dr + db*db + dg*dg))
+		d += math.Sqrt(dr*dr + db*db + dg*dg)
 	}
 
 	return d
@@ -69,7 +69,7 @@ func guessStripWidth(img image.Image) int {
 	distances := make([]float64, b.Dx())
 
 	for x := b.Min.X; x < b.Max.X; x++ {
-		distances[x-b.Min.X] = float64(distance(img, x, img, x+1))
+		distances[x-b.Min.X] = distance(img, x, img, x+1)
 	}
 
 	sum := float64(0)
@@ -150,9 +150,9 @@ func guessLeftmostHighestRelativeError(strips []image.Image, rightof []Score) in
 		d2 := distance(strips[r.index], b.Min.X, strips[r.index], b.Min.X+1)
 		d3 := distance(strips[r.index], b.Min.X+1, strips[r.index], b.Min.X+2)
 
-		avg := float64(d0+d1+d2+d3) / 4.0
+		avg := (d0+d1+d2+d3) / 4.0
 
-		if rightmost == -1 || math.Abs(float64(rightof[rightmost].distance)-ravg)/ravg < math.Abs(float64(r.distance)-avg)/avg {
+		if rightmost == -1 || math.Abs(rightof[rightmost].distance-ravg)/ravg < math.Abs(r.distance-avg)/avg {
 			rightmost = i
 			ravg = avg
 		}
