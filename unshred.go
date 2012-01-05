@@ -81,7 +81,7 @@ func guessStripWidth(img image.Image) int {
 	n := float64(b.Dx())
 
 	mean := sum / n
-	stddev := math.Sqrt(math.Abs(sumsq-(sum*sum)/n) / n)
+	stddev := math.Sqrt(sumsq/n - mean*mean)
 
 	// we now have the mean and stddev of all the distances between sequential pixel columns
 	// figure out the most common width between distances which are 2 stddevs from the mean
