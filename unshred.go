@@ -161,7 +161,7 @@ func guessLeftmostHighestRelativeError(strips []image.Image, rightof []Score) in
 	return rightof[rightmost].index
 }
 
-// fisher-yates 
+// fisher-yates
 func shuffle(array []image.Image) {
 
 	for i := len(array) - 1; i >= 1; i-- {
